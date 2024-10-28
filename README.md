@@ -1,5 +1,5 @@
 # SCRMBL
-## Welcome to SCRMBL, A highly Intelligent AI-powered Encryption/Decryption steganographic tool used to hide some top-secret data. Here is the sequence of SCRMBL using Code Name (no pun intended) "TRACR" as the Algorithm
+## Welcome to SCRMBL, A Intelligent AI-powered Encryption/Decryption steganographic tool used to hide some top-secret data. Here is the sequence of SCRMBL using Code Name (no pun intended) "TRACR" as the Algorithm
 # Image Encryption and Steganography Workflow
 
 ## 1. User Uploads Image
