@@ -36,10 +36,3 @@
 ## 7. User Interface
 - A fully functional UI guides the user through each step, from uploading an image to decrypting and retrieving hidden data.
 - This can be implemented as a web application using frontend frameworks like **React** or **Vue**, combined with a backend for processing the images and managing encryption (e.g., **Node.js**, **Flask**, **Django**).
-
-## Feasibility and Challenges
-- **Feasibility**: This is highly feasible with the right tools, image processing knowledge, and cryptographic techniques.
-- **Challenges**:
-  - Optimizing encryption and decryption algorithms
-  - Handling large file sizes and ensuring compatibility across different image formats
-  - Ensuring data security and preventing unauthorized decryption
