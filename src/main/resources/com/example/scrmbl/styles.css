@@ -1,0 +1,10 @@
+@font-face {
+    font-family: "Orbitron";
+    src: url("fonts/Orbitron-VariableFont_wght.ttf");
+}
+
+.label-title {
+    -fx-font-family: "Orbitron";
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
