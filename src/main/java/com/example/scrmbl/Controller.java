@@ -33,9 +33,10 @@ public class Controller {
     private enum Mode { ENCRYPT, DECRYPT }
     private final ObjectProperty<Mode> mode = new SimpleObjectProperty<>(Mode.ENCRYPT);
 
-    // Active maps for Hard-Boiled (HashMap-only) mode
+    // Active phrase based encryptions
     private Map<Byte, Byte> encMapHB;
     private Map<Byte, Byte> decMapHB;
+    private String currentPassphraseHB; // <- remember what user entered
 
     // Add this enum under your existing Mode enum
     private enum Flavor { SCRAMBLED, OVEREASY, HARDBOILED }
@@ -113,29 +114,29 @@ public class Controller {
                 return;
             }
 
-            boolean decryptMode = isDecryptMode(); // you already have this helper
-            if (!ensureMapsPresentForMode(decryptMode)) return;
+            boolean decryptMode = isDecryptMode();
+
+            // Require the user to have hit Retrieve Key first
+            if (encMapHB == null || decMapHB == null) {
+                outputText.setText("Use Retrieve Key to enter your passphrase first.");
+                setWarnStatus();
+                return;
+            }
 
             if (!hardboiledRadio.isSelected()) {
-                // For now, wire only the Hard-Boiled flavor to your HashMap design.
-                // You can later route other radios to their own implementations.
                 outputText.setText("Select Hard-Boiled for the HashMap cipher.");
                 setWarnStatus();
                 return;
             }
 
             if (decryptMode) {
-                // Expect Base64 input, output UTF-8 text
-                byte[] cipher = Base64.getDecoder().decode(in.trim());
-                byte[] plain = decryptBytesHB(cipher);
-                String out = new String(plain, StandardCharsets.UTF_8);
-                outputText.setText(out);
+                byte[] cipher = java.util.Base64.getDecoder().decode(in.trim());
+                byte[] plain  = decryptBytesHB(cipher); // uses decMapHB
+                outputText.setText(new String(plain, java.nio.charset.StandardCharsets.UTF_8));
             } else {
-                // Take UTF-8 text, output Base64
-                byte[] plain = in.getBytes(StandardCharsets.UTF_8);
-                byte[] cipher = encryptBytesHB(plain);
-                String out = Base64.getEncoder().encodeToString(cipher);
-                outputText.setText(out);
+                byte[] plain  = in.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+                byte[] cipher = encryptBytesHB(plain);  // uses encMapHB
+                outputText.setText(java.util.Base64.getEncoder().encodeToString(cipher));
             }
 
             setOkStatus();
@@ -151,20 +152,44 @@ public class Controller {
 
 
 
+
+
     public void doEncrypt() {
         String userText = inputText.getText();
     }
 
 
-    // Map-based (Hard-Boiled)
-    private String encryptHardBoiled(String plain, String key) {
-        // TODO: build HashMap<Character,Character> from key
-        return "[HB encrypt stub] " + plain;
+    private String encryptHardBoiled(String plain, String passphrase) {
+        try {
+            Map<Byte, Byte> enc = SubstitutionMap.generateMapFromPassphrase(passphrase);
+            byte[] plainBytes = plain.getBytes(StandardCharsets.UTF_8);
+            byte[] cipher = new byte[plainBytes.length];
+            for (int i = 0; i < plainBytes.length; i++) {
+                cipher[i] = enc.get(plainBytes[i]);
+            }
+            return Base64.getEncoder().encodeToString(cipher);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return "Error: " + ex.getMessage();
+        }
     }
-    private String decryptHardBoiled(String cipher, String key) {
-        // TODO: invert HashMap and map back
-        return "[HB decrypt stub] " + cipher;
+
+    private String decryptHardBoiled(String cipher, String passphrase) {
+        try {
+            Map<Byte, Byte> enc = SubstitutionMap.generateMapFromPassphrase(passphrase);
+            Map<Byte, Byte> dec = SubstitutionMap.invertMap(enc);
+            byte[] cipherBytes = Base64.getDecoder().decode(cipher);
+            byte[] plain = new byte[cipherBytes.length];
+            for (int i = 0; i < cipherBytes.length; i++) {
+                plain[i] = dec.get(cipherBytes[i]);
+            }
+            return new String(plain, StandardCharsets.UTF_8);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return "Error: " + ex.getMessage();
+        }
     }
+
 
     // Graph-based (Over-Easy)
     private String encryptOverEasy(String plain, String key) {
@@ -250,7 +275,9 @@ public class Controller {
                     setWarnStatus();
                     return;
                 }
-                setMapsFromPassphrase(passphrase);
+                currentPassphraseHB = passphrase; // remember it
+                encMapHB = SubstitutionMap.generateMapFromPassphrase(passphrase);
+                decMapHB = SubstitutionMap.invertMap(encMapHB);
                 outputText.setText("Key ready. You can now encrypt or decrypt.");
                 setOkStatus();
             } catch (Exception ex) {
@@ -260,6 +287,7 @@ public class Controller {
             }
         });
     }
+
 
 
 }
