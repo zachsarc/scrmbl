@@ -85,6 +85,7 @@ public class Controller {
             doEncrypt(); // your existing method
         }
          */
+        //asd
     }
 
     @FXML
