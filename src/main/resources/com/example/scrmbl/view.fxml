@@ -57,7 +57,8 @@
 
             <children>
                 <TextArea fx:id="inputText" promptText="Enter text here..." />
-                <TextArea fx:id="outputText" promptText="Output shown here" GridPane.rowIndex="1" />
+                <TextArea fx:id="outputText" promptText="Output shown here"
+                          GridPane.rowIndex="1" editable="false" />
 
                 <Button fx:id="retrieveKeyButton" alignment="CENTER" onAction="#onRetrieveKey" prefHeight="19.0" prefWidth="120.0" text="RETRIEVE KEY" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
             </children>
