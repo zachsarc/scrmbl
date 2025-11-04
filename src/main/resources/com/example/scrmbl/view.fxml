@@ -1,71 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="700.0"
-            stylesheets="@styles.css"
-            xmlns="http://javafx.com/javafx/24.0.1"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.example.scrmbl.Controller">
+<AnchorPane prefHeight="400.0" prefWidth="700.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.scrmbl.Controller">
 
     <children>
 
         <!-- LEFT: mode selection + action button -->
-        <GridPane layoutX="94.0" layoutY="201.0" prefHeight="165.0" prefWidth="242.0">
+        <GridPane layoutX="94.0" layoutY="227.0" prefHeight="165.0" prefWidth="242.0">
             <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints vgrow="SOMETIMES" prefHeight="30.0"/>
-                <RowConstraints vgrow="SOMETIMES" prefHeight="30.0"/>
-                <RowConstraints vgrow="SOMETIMES" prefHeight="30.0"/>
-                <RowConstraints vgrow="SOMETIMES" prefHeight="30.0"/>
-                <RowConstraints vgrow="SOMETIMES" prefHeight="30.0"/>
+                <RowConstraints prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints prefHeight="30.0" vgrow="SOMETIMES" />
             </rowConstraints>
 
             <children>
-                <Label fx:id="cookedLabel"
-                       styleClass="label-title"
-                       text="How would you like your word cooked?"
-                       GridPane.halignment="CENTER" GridPane.valignment="CENTER">
-                    <font><Font size="10.0"/></font>
+                <Label fx:id="cookedLabel" styleClass="label-title" text="How would you like your word cooked?" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                    <font><Font size="10.0" /></font>
                 </Label>
 
-                <RadioButton fx:id="scrambledRadio" text="Scrambled" mnemonicParsing="false" GridPane.rowIndex="1"/>
-                <RadioButton fx:id="overeasyRadio"  text="Over-Easy"  mnemonicParsing="false" GridPane.rowIndex="2"/>
-                <RadioButton fx:id="hardboiledRadio" text="Hard-Boiled" mnemonicParsing="false" GridPane.rowIndex="3"/>
+                <RadioButton fx:id="scrambledRadio" mnemonicParsing="false" text="Scrambled" GridPane.rowIndex="1" />
+                <RadioButton fx:id="overeasyRadio" mnemonicParsing="false" text="Over-Easy" GridPane.rowIndex="2" />
+                <RadioButton fx:id="hardboiledRadio" mnemonicParsing="false" text="Hard-Boiled" GridPane.rowIndex="3" />
 
-                <Button fx:id="runButton" text="SCRMBL"
-                        onAction="#onScrmbl"
-                        GridPane.halignment="CENTER" GridPane.valignment="CENTER"
-                        GridPane.rowIndex="4"/>
+                <Button fx:id="runButton" onAction="#onScrmbl" text="SCRMBL" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
             </children>
         </GridPane>
 
         <!-- RIGHT: input/output + retrieve key -->
         <GridPane layoutX="398.0" layoutY="23.0" prefHeight="358.0" prefWidth="280.0">
             <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints vgrow="SOMETIMES" prefHeight="157.45"/>
-                <RowConstraints vgrow="SOMETIMES" prefHeight="170.67"/>
-                <RowConstraints vgrow="ALWAYS"   prefHeight="30.33" valignment="CENTER"/>
+                <RowConstraints prefHeight="157.45" vgrow="SOMETIMES" />
+                <RowConstraints prefHeight="170.67" vgrow="SOMETIMES" />
+                <RowConstraints prefHeight="30.33" valignment="CENTER" vgrow="ALWAYS" />
             </rowConstraints>
 
             <children>
-                <TextArea fx:id="inputText" promptText="Enter text here..."/>
-                <TextArea fx:id="outputText" promptText="Output shown here" GridPane.rowIndex="1"/>
+                <TextArea fx:id="inputText" promptText="Enter text here..." />
+                <TextArea fx:id="outputText" promptText="Output shown here" GridPane.rowIndex="1" />
 
-                <Button fx:id="retrieveKeyButton" text="RETRIEVE KEY"
-                        onAction="#onRetrieveKey"
-                        alignment="CENTER" prefHeight="19.0" prefWidth="120.0"
-                        GridPane.rowIndex="2" GridPane.halignment="CENTER"
-                        GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS"/>
+                <Button fx:id="retrieveKeyButton" alignment="CENTER" onAction="#onRetrieveKey" prefHeight="19.0" prefWidth="120.0" text="RETRIEVE KEY" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
             </children>
         </GridPane>
 
@@ -75,7 +69,20 @@
             </image> </ImageView>
 
         <!-- STATUS LIGHT -->
-        <Circle fx:id="statusLight" fill="#888888" layoutX="215.0" layoutY="153.0"
-                radius="6.0" stroke="BLACK" strokeType="INSIDE"/>
+        <Circle fx:id="statusLight" fill="#888888" layoutX="215.0" layoutY="153.0" radius="6.0" stroke="BLACK" strokeType="INSIDE" />
+      <GridPane layoutX="140.0" layoutY="166.0" prefHeight="56.0" prefWidth="151.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" />
+          <RowConstraints />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <ToggleButton fx:id="modeToggle" mnemonicParsing="false" prefHeight="26.0" prefWidth="172.0" text="Switch To Decrypt" GridPane.rowIndex="2" />
+            <Label fx:id="modeLabel" alignment="CENTER" prefHeight="17.0" prefWidth="152.0" text="Mode: Encrypt" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+         </children>
+      </GridPane>
     </children>
 </AnchorPane>
