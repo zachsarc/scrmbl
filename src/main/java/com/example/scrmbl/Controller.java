@@ -88,6 +88,10 @@ public class Controller {
         //asd
     }
 
+    public void doEncrypt() {
+        String userText = inputText.getText();
+    }
+
     @FXML
     public void onRetrieveKey() {
         /*
