@@ -123,12 +123,6 @@ public class Controller {
                 return;
             }
 
-            if (!hardboiledRadio.isSelected()) {
-                outputText.setText("Select Hard-Boiled for the HashMap cipher.");
-                setWarnStatus();
-                return;
-            }
-
             if (decryptMode) {
                 byte[] cipher = java.util.Base64.getDecoder().decode(in.trim());
                 byte[] plain  = decryptBytesHB(cipher); // uses decMapHB
@@ -156,7 +150,20 @@ public class Controller {
 
     public void doEncrypt() {
         String userText = inputText.getText();
+        Flavor flavor = getSelectedFlavor();
+        String key = currentPassphraseHB;   // set by onRetrieveKey()
+
+        if (key == null || key.isEmpty()) {
+            outputText.setText("Please use Retrieve Key to set a passphrase first.");
+            setWarnStatus();
+            return;
+        }
+
+        String cipher = encrypt(userText, flavor, key);
+        outputText.setText(cipher);
+        setOkStatus();
     }
+
 
 
     private String encryptHardBoiled(String plain, String passphrase) {
@@ -193,23 +200,115 @@ public class Controller {
 
     // Graph-based (Over-Easy)
     private String encryptOverEasy(String plain, String key) {
-        // TODO: construct cycle graph / pseudo-random walk from key
-        return "[OE encrypt stub] " + plain;
-    }
-    private String decryptOverEasy(String cipher, String key) {
-        // TODO: walk inverse path
-        return "[OE decrypt stub] " + cipher;
+        try {
+            TreeNode root = buildTreeForKey(key);
+
+            byte[] plainBytes = plain.getBytes(StandardCharsets.UTF_8);
+            StringBuilder sb = new StringBuilder();
+
+            for (int i = 0; i < plainBytes.length; i++) {
+                String code = findPath(root, plainBytes[i], "");
+                if (code == null) {
+                    throw new IllegalStateException(
+                            "Byte not found in OverEasy tree: " + (plainBytes[i] & 0xFF)
+                    );
+                }
+                if (i > 0) {
+                    sb.append(' ');
+                }
+                sb.append(code);
+            }
+
+            // Example output: "010 11 . 0011"
+            return sb.toString();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return "Error (OverEasy encrypt): " + ex.getMessage();
+        }
     }
 
-    // Tree-based (Scrambled)
+    private String decryptOverEasy(String cipher, String key) {
+        try {
+            TreeNode root = buildTreeForKey(key);
+
+            String trimmed = cipher.trim();
+            if (trimmed.isEmpty()) {
+                return "";
+            }
+
+            String[] codes = trimmed.split("\\s+");
+            byte[] out = new byte[codes.length];
+
+            for (int i = 0; i < codes.length; i++) {
+                out[i] = decodePath(root, codes[i]);
+            }
+
+            return new String(out, StandardCharsets.UTF_8);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return "Error (OverEasy decrypt): " + ex.getMessage();
+        }
+    }
+
+// Graph / HashMap-based (Scrambled)
     private String encryptScrambled(String plain, String key) {
-        // TODO: build shuffled BST from key insertion order
-        return "[SC encrypt stub] " + plain;
+        try {
+            // adjacency map for our graph
+            Map<Byte, Byte> enc = SubstitutionMap.generateMapFromPassphrase(key);
+
+            byte[] plainBytes = plain.getBytes(StandardCharsets.UTF_8);
+            byte[] cipherBytes = new byte[plainBytes.length];
+
+            for (int i = 0; i < plainBytes.length; i++) {
+                byte node = plainBytes[i];
+
+                // position-based walk length: 1..7
+                int steps = (i % 7) + 1;
+
+                // walk forward along the permutation graph
+                for (int s = 0; s < steps; s++) {
+                    node = enc.get(node);
+                }
+                cipherBytes[i] = node;
+            }
+
+            // make it printable
+            return Base64.getEncoder().encodeToString(cipherBytes);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return "Error (Scrambled encrypt): " + ex.getMessage();
+        }
     }
+
     private String decryptScrambled(String cipher, String key) {
-        // TODO: reverse traversal using the same BST
-        return "[SC decrypt stub] " + cipher;
+        try {
+            // same graph from the same key
+            Map<Byte, Byte> enc = SubstitutionMap.generateMapFromPassphrase(key);
+            Map<Byte, Byte> dec = SubstitutionMap.invertMap(enc); // inverse edges
+
+            byte[] cipherBytes = Base64.getDecoder().decode(cipher);
+            byte[] plainBytes = new byte[cipherBytes.length];
+
+            for (int i = 0; i < cipherBytes.length; i++) {
+                byte node = cipherBytes[i];
+
+                // same position-based walk length
+                int steps = (i % 7) + 1;
+
+                // walk backward along the graph using the inverse map
+                for (int s = 0; s < steps; s++) {
+                    node = dec.get(node);
+                }
+                plainBytes[i] = node;
+            }
+
+            return new String(plainBytes, StandardCharsets.UTF_8);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return "Error (Scrambled decrypt): " + ex.getMessage();
+        }
     }
+
 
     private String encrypt(String plain, Flavor f, String key) {
         switch (f) {
@@ -288,6 +387,95 @@ public class Controller {
         });
     }
 
+    // Node type for Over Easy tree
+    private static class TreeNode {
+        byte value;
+        TreeNode left;
+        TreeNode right;
 
+        TreeNode(byte v) {
+            this.value = v;
+        }
+    }
+
+    // Build a deterministic BST from the passphrase key.
+// We reuse SubstitutionMap so we do not have to write another hash/shuffle.
+    private TreeNode buildTreeForKey(String key) throws Exception {
+        Map<Byte, Byte> enc = SubstitutionMap.generateMapFromPassphrase(key);
+
+        TreeNode root = null;
+        // Insert values into the BST in the order 0..255 mapped through enc
+        for (int i = 0; i < 256; i++) {
+            byte mapped = enc.get((byte) i);   // enc is a full permutation
+            root = insertNode(root, mapped);
+        }
+        return root;
+    }
+
+    // Standard BST insert on bytes (treat them as 0..255 unsigned)
+    private TreeNode insertNode(TreeNode node, byte val) {
+        if (node == null) {
+            return new TreeNode(val);
+        }
+
+        int v = val & 0xFF;
+        int n = node.value & 0xFF;
+
+        if (v < n) {
+            node.left = insertNode(node.left, val);
+        } else if (v > n) {
+            node.right = insertNode(node.right, val);
+        }
+        // no equal case, we know it is a permutation
+        return node;
+    }
+
+    // Find path from root to a target byte as a string of '0' and '1'
+    private String findPath(TreeNode node, byte target, String pathSoFar) {
+        if (node == null) {
+            return null;
+        }
+        if (node.value == target) {
+            // Use "." as a special code if the node is the root and path is empty
+            return pathSoFar.length() == 0 ? "." : pathSoFar;
+        }
+
+        String left = findPath(node.left, target, pathSoFar + "0");
+        if (left != null) {
+            return left;
+        }
+        return findPath(node.right, target, pathSoFar + "1");
+    }
+
+    // Walk a path string on the tree and return the byte at the end
+    private byte decodePath(TreeNode root, String code) {
+        TreeNode node = root;
+
+        // Special case for the root code
+        if (".".equals(code)) {
+            if (node == null) {
+                throw new IllegalStateException("Tree is empty");
+            }
+            return node.value;
+        }
+
+        for (int i = 0; i < code.length(); i++) {
+            char c = code.charAt(i);
+            if (c == '0') {
+                if (node.left == null) {
+                    throw new IllegalStateException("Invalid code: left child is null");
+                }
+                node = node.left;
+            } else if (c == '1') {
+                if (node.right == null) {
+                    throw new IllegalStateException("Invalid code: right child is null");
+                }
+                node = node.right;
+            } else {
+                throw new IllegalArgumentException("Invalid character in code: " + c);
+            }
+        }
+        return node.value;
+    }
 
 }
