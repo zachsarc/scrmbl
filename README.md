@@ -1,7 +1,7 @@
 # SCRMBL
 ## Developers: Zach Lariccia, Tyler Pyrzenski
 ## Welcome to SCRMBL, An Intelligent AI-powered Encryption/Decryption steganographic tool used to hide some top-secret data. Here is the sequence of SCRMBL using 3 different types of custom algorithms as listed below.
-# Image Encryption and Steganography Workflow
+# Encryption and Steganography Workflow
 
 ## 🧩 Overview
 
@@ -40,7 +40,7 @@ Each algorithm leverages its data structure’s relationships—**map lookups**,
 
 Different algorithms produce unique encrypted outputs for the same plaintext and key, but all are **fully reversible** with the correct key.
 
-## Select your encryption flavor
+## Select your encryption preference
 
 Hard-Boiled – Map-based
 
