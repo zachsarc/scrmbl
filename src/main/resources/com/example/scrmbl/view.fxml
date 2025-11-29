@@ -7,82 +7,106 @@
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="700.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.scrmbl.Controller">
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.example.scrmbl.Controller"
+            prefWidth="900.0" prefHeight="600.0"
+            stylesheets="@styles.css">
 
-    <children>
+    <!-- CENTER: everything lives here and is centered -->
+    <center>
+        <HBox alignment="CENTER" spacing="80.0" BorderPane.alignment="CENTER">
 
-        <!-- LEFT: mode selection + action button -->
-        <GridPane layoutX="94.0" layoutY="227.0" prefHeight="165.0" prefWidth="242.0">
-            <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            </columnConstraints>
-            <rowConstraints>
-                <RowConstraints prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints prefHeight="30.0" vgrow="SOMETIMES" />
-            </rowConstraints>
-
+            <!-- LEFT COLUMN: egg + mode + algorithm choice + SCRMBL button -->
             <children>
-                <Label fx:id="cookedLabel" prefHeight="13.0" prefWidth="223.0" styleClass="label-title" text="How would you like your word cooked?" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
-                    <font><Font size="12.0" /></font>
-                </Label>
+                <VBox alignment="CENTER" spacing="12.0">
 
-                <RadioButton fx:id="scrambledRadio" mnemonicParsing="false" text="Scrambled (Graph)" GridPane.rowIndex="1" />
-                <RadioButton fx:id="overeasyRadio" mnemonicParsing="false" text="Over-Easy (Tree)" GridPane.rowIndex="2" />
-                <RadioButton fx:id="hardboiledRadio" mnemonicParsing="false" text="Hard-Boiled (HashMap)" GridPane.rowIndex="3" />
+                    <!-- Egg image -->
+                    <ImageView fitHeight="150.0" fitWidth="200.0"
+                               pickOnBounds="true" preserveRatio="true">
+                        <image>
+                            <Image url="@../../../images/SCRMBL_GIF.gif" />
+                        </image>
+                    </ImageView>
 
-                <Button fx:id="runButton" onAction="#onScrmbl" text="SCRMBL" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
+                    <!-- Status light -->
+                    <Circle fx:id="statusLight"
+                            radius="6.0"
+                            fill="#888888"
+                            stroke="BLACK"
+                            strokeType="INSIDE" />
+
+                    <!-- Mode label + toggle -->
+                    <VBox alignment="CENTER" spacing="4.0">
+                        <Label fx:id="modeLabel"
+                               alignment="CENTER"
+                               text="Mode: Encrypt">
+                            <font>
+                                <Font size="12.0" />
+                            </font>
+                        </Label>
+                        <ToggleButton fx:id="modeToggle"
+                                      mnemonicParsing="false"
+                                      text="Switch To Decrypt"
+                                      prefWidth="150.0" />
+                    </VBox>
+
+                    <!-- "How cooked" label -->
+                    <Label fx:id="cookedLabel"
+                           text="How would you like your word cooked?">
+                        <font>
+                            <Font size="12.0" />
+                        </font>
+                    </Label>
+
+                    <!-- Radio buttons -->
+                    <VBox alignment="CENTER_LEFT" spacing="4.0">
+                        <RadioButton fx:id="scrambledRadio"
+                                     text="Scrambled (Graph)"
+                                     mnemonicParsing="false" />
+                        <RadioButton fx:id="overeasyRadio"
+                                     text="Over-Easy (Tree)"
+                                     mnemonicParsing="false" />
+                        <RadioButton fx:id="hardboiledRadio"
+                                     text="Hard-Boiled (HashMap)"
+                                     mnemonicParsing="false" />
+                    </VBox>
+
+                    <!-- SCRMBL button -->
+                    <Button fx:id="runButton"
+                            text="SCRMBL"
+                            mnemonicParsing="false"
+                            prefWidth="80.0" />
+
+                </VBox>
+
+                <!-- RIGHT COLUMN: input, output, retrieve key -->
+                <VBox alignment="CENTER" spacing="10.0">
+
+                    <TextArea fx:id="inputText"
+                              prefWidth="380.0" prefHeight="110.0"
+                              promptText="Enter text here..." />
+
+                    <TextArea fx:id="outputText"
+                              prefWidth="380.0" prefHeight="140.0"
+                              editable="false"
+                              promptText="Output shown here" />
+
+                    <Button fx:id="retrieveKeyButton"
+                            text="RETRIEVE KEY"
+                            mnemonicParsing="false"
+                            prefWidth="120.0" />
+
+                </VBox>
             </children>
-        </GridPane>
 
-        <!-- RIGHT: input/output + retrieve key -->
-        <GridPane layoutX="398.0" layoutY="23.0" prefHeight="358.0" prefWidth="280.0">
-            <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            </columnConstraints>
-            <rowConstraints>
-                <RowConstraints prefHeight="157.45" vgrow="SOMETIMES" />
-                <RowConstraints prefHeight="170.67" vgrow="SOMETIMES" />
-                <RowConstraints prefHeight="30.33" valignment="CENTER" vgrow="ALWAYS" />
-            </rowConstraints>
+        </HBox>
+    </center>
 
-            <children>
-                <TextArea fx:id="inputText" promptText="Enter text here..." />
-                <TextArea fx:id="outputText" editable="false" promptText="Output shown here" GridPane.rowIndex="1" />
-
-                <Button fx:id="retrieveKeyButton" alignment="CENTER" onAction="#onRetrieveKey" prefHeight="19.0" prefWidth="120.0" text="RETRIEVE KEY" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
-            </children>
-        </GridPane>
-
-        <!-- LOGO (GIF will animate at runtime) -->
-        <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="115.0" layoutY="53.0" pickOnBounds="true" preserveRatio="true">
-            <image> <Image url="@../../../images/SCRMBL_GIF.gif" />
-            </image> </ImageView>
-
-        <!-- STATUS LIGHT -->
-        <Circle fx:id="statusLight" fill="#888888" layoutX="215.0" layoutY="153.0" radius="6.0" stroke="BLACK" strokeType="INSIDE" />
-      <GridPane layoutX="140.0" layoutY="166.0" prefHeight="56.0" prefWidth="151.0">
-        <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        </columnConstraints>
-        <rowConstraints>
-            <RowConstraints minHeight="10.0" prefHeight="30.0" />
-          <RowConstraints />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        </rowConstraints>
-         <children>
-            <ToggleButton fx:id="modeToggle" mnemonicParsing="false" prefHeight="26.0" prefWidth="172.0" text="Switch To Decrypt" GridPane.rowIndex="2" />
-            <Label fx:id="modeLabel" alignment="CENTER" prefHeight="17.0" prefWidth="152.0" text="Mode: Encrypt" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-         </children>
-      </GridPane>
-    </children>
-</AnchorPane>
+</BorderPane>
