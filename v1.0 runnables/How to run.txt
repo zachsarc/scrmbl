@@ -1,0 +1,27 @@
+2 Ways to run the program.
+
+1. From the command line
+
+Windows
+cd "DIRECTORY_WITH_SCRMBL_IMAGE"
+.\Scrmbl.exe
+
+Mac
+cd DIRECTORY_WITH_SCRMBL_IMAGE
+open Scrmbl.app
+
+
+2. From the installed application
+
+Windows
+Extract zipped folder, then double click Scrmbl-1.0.exe
+then,
+Desktop → double click Scrmbl.exe
+
+Mac
+Extract zipped folder, then run Scrmbl-1.0.dmg
+then,
+via Finder
+Go to Applications → Scrmbl.app → double-click
+
+
