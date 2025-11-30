@@ -82,7 +82,8 @@
                     <Button fx:id="runButton"
                             text="SCRMBL"
                             mnemonicParsing="false"
-                            prefWidth="80.0" />
+                            prefWidth="80.0"
+                            onAction="#onScrmbl" />
 
                 </VBox>
 
@@ -101,7 +102,8 @@
                     <Button fx:id="retrieveKeyButton"
                             text="RETRIEVE KEY"
                             mnemonicParsing="false"
-                            prefWidth="120.0" />
+                            prefWidth="120.0"
+                            onAction="#onRetrieveKey" />
 
                 </VBox>
             </children>
